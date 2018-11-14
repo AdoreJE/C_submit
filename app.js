@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var writeFile = require('write');
 var _storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/')
@@ -31,6 +32,9 @@ app.post('/upload', upload.single('userfile'), function(req, res){
   }console.log("client IP is *********************" + ip);
 
   res.send('Uploaded : '+req.file.filename);
+  writeFile('test.log', req.file.filename + " " + ip, function(err){
+    if(err) console.log(err);
+  })
 });
 app.listen(3000, function(){
   console.log('Connected, 3000 port!');
