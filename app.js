@@ -25,16 +25,9 @@ app.get('/upload', function(req, res){
 });
 app.post('/upload', upload.single('userfile'), function(req, res){
   console.log(req.file);
-  var ip;
-  if (req.headers['x-forwarded-for']) {
-      ip = req.headers['x-forwarded-for'].split(",")[0];
-  } else if (req.connection && req.connection.remoteAddress) {
-      ip = req.connection.remoteAddress;
-  } else {
-      ip = req.ip;
-  }console.log("client IP is *********************" + ip);
+  var ip = getUserIP(req);
   var filename = req.file.filename;
-  fs.appendFileSync('log.txt', filename + " " + ip + "\n");
+  fs.appendFileSync('log.txt', filename + " " + ip + "\r\n");
 
   res.send('Uploaded : '+filename);
 
@@ -42,3 +35,25 @@ app.post('/upload', upload.single('userfile'), function(req, res){
 app.listen(3000, function(){
   console.log('Connected, 3000 port!');
 })
+
+
+function getUserIP(req){
+    var ipAddress;
+
+    if(!!req.hasOwnProperty('sessionID')){
+        ipAddress = req.headers['x-forwarded-for'];
+    } else{
+        if(!ipAddress){
+            var forwardedIpsStr = req.header('x-forwarded-for');
+
+            if(forwardedIpsStr){
+                var forwardedIps = forwardedIpsStr.split(',');
+                ipAddress = forwardedIps[0];
+            }
+            if(!ipAddress){
+                ipAddress = req.connection.remoteAddress;
+            }
+        }
+    }
+    return ipAddress;
+}
