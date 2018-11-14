@@ -1,7 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
-var ip;
 var _storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/')
@@ -22,7 +21,7 @@ app.get('/upload', function(req, res){
 });
 app.post('/upload', upload.single('userfile'), function(req, res){
   console.log(req.file);
-
+  var ip;
   if (req.headers['x-forwarded-for']) {
       ip = req.headers['x-forwarded-for'].split(",")[0];
   } else if (req.connection && req.connection.remoteAddress) {
