@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var writeFile = require('write');
+var fs = require('fs');
 var _storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/')
@@ -13,6 +14,8 @@ var _storage = multer.diskStorage({
 var upload = multer({ storage: _storage })
 var fs = require('fs');
 var app = express();
+
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.locals.pretty = true;
 app.set('views', './views_file');
@@ -30,26 +33,12 @@ app.post('/upload', upload.single('userfile'), function(req, res){
   } else {
       ip = req.ip;
   }console.log("client IP is *********************" + ip);
+  var filename = req.file.filename;
+  fs.appendFileSync('log.txt', filename + " " + ip + "\n");
+  
+  res.send('Uploaded : '+filename);
 
-  res.send('Uploaded : '+req.file.filename);
-  writeFile(log,req.file.filenave+" "+ip);
 });
 app.listen(3000, function(){
   console.log('Connected, 3000 port!');
 })
-
-function writeFile(name, msg){
-  if(name == "") return false;
-  var defaultpath="uploads";
-  var fileObject = new ActiveXObject("Scripting.FileSystemObject");
-  var fullpath = defaultpath+"\\"+name;
-  if(!fileObject.FileExists(fullpath)){
-    var fWrite = fileObject.CreateTextFile(fullpath,false);
-    fWrite.write(msg);
-    fWrite.close();
-  }else{
-    var fWrite = fileObject.OpenTextFile(fullpath,8);
-    fWrite.write(msg);
-    fWrite.close();
-  }
-}
