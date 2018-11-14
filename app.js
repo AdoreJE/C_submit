@@ -32,10 +32,24 @@ app.post('/upload', upload.single('userfile'), function(req, res){
   }console.log("client IP is *********************" + ip);
 
   res.send('Uploaded : '+req.file.filename);
-  writeFile('test.log', req.file.filename + " " + ip, function(err){
-    if(err) console.log(err);
-  })
+  writeFile(log,req.file.filenave+" "+ip);
 });
 app.listen(3000, function(){
   console.log('Connected, 3000 port!');
 })
+
+function writeFile(name, msg){
+  if(name == "") return false;
+  var defaultpath="uploads";
+  var fileObject = new ActiveXObject("Scripting.FileSystemObject");
+  var fullpath = defaultpath+"\\"+name;
+  if(!fileObject.FileExists(fullpath)){
+    var fWrite = fileObject.CreateTextFile(fullpath,false);
+    fWrite.write(msg);
+    fWrite.close();
+  }else{
+    var fWrite = fileObject.OpenTextFile(fullpath,8);
+    fWrite.write(msg);
+    fWrite.close();
+  }
+}
