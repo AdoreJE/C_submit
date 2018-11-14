@@ -13,6 +13,7 @@ var _storage = multer.diskStorage({
         ip = req.connection.remoteAddress;
     } else {
         ip = req.ip;
+      }
     cb(null, file.originalname + ip);
   }
 })
