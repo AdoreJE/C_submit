@@ -7,14 +7,7 @@ var _storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-    if (req.headers['x-forwarded-for']) {
-        ip = req.headers['x-forwarded-for'].split(",")[0];
-    } else if (req.connection && req.connection.remoteAddress) {
-        ip = req.connection.remoteAddress;
-    } else {
-        ip = req.ip;
-      }
-    cb(null, file.originalname + ip);
+    cb(null, file.originalname);
   }
 })
 var upload = multer({ storage: _storage })
