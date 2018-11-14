@@ -7,7 +7,7 @@ var _storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname+getUserIP(req));
+    cb(null, file.originalname + '-' + getUserIP(req));
   }
 })
 var upload = multer({ storage: _storage })
@@ -25,7 +25,7 @@ app.get('/upload', function(req, res){
 app.post('/upload', upload.single('userfile'), function(req, res){
   console.log(req.file);
   var ip = getUserIP(req);
-  var filename = req.file.filename;
+  var filename = req.file.originalname;
   fs.appendFileSync('log.txt', filename + " " + ip + "\r\n");
 
   res.send('Uploaded : '+filename);
