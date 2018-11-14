@@ -7,6 +7,12 @@ var _storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
+    if (req.headers['x-forwarded-for']) {
+        ip = req.headers['x-forwarded-for'].split(",")[0];
+    } else if (req.connection && req.connection.remoteAddress) {
+        ip = req.connection.remoteAddress;
+    } else {
+        ip = req.ip;
     cb(null, file.originalname + ip);
   }
 })
@@ -22,7 +28,7 @@ app.get('/upload', function(req, res){
 });
 app.post('/upload', upload.single('userfile'), function(req, res){
   console.log(req.file);
-  var ip;
+
   if (req.headers['x-forwarded-for']) {
       ip = req.headers['x-forwarded-for'].split(",")[0];
   } else if (req.connection && req.connection.remoteAddress) {
